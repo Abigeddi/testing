@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  username String @unique
+  email String @unique
+  twofactor Boolean @default(false)
+  channels Channel[]
+  profileId Profile?
+
+
+}
+
+model Profile {
+  id          Int      @id @default(autoincrement())
+  fullName    String
+  pictureUrl  String
+  biography   String
+  userId      Int      @unique
+  user User @relation(fields: [userId],references:[id])
+}
+
+model Channel {
+  id          Int      @id @default(autoincrement())
+  name String @unique
+  password String
+  owner_role Role @default(ADMIN)
+  type Mode @default(PUBLIC)
+  owner_id Int
+  topic String
+  user   User   @relation(fields: [owner_id], references: [id])
+  channel_members Channel_member[]
+
+}
+model Channel_member{
+    id          Int      @id @default(autoincrement())
+  channel     Channel  @relation(fields: [channelId], references: [id])
+  channelId   Int @unique 
+  userId      Int @unique
+}
+
+
+enum Role {
+  USER
+  ADMIN
+  OWNER
+}
+
+enum Mode {
+  PUBLIC
+  PRIVATE
+  PROTECTED
+}
