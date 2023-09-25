@@ -16,9 +16,13 @@ model User {
   lastName    String
   username String @unique
   email String @unique
+  password String
   twofactor Boolean @default(false)
   channels Channel[]
   profileId Profile?
+  isonline Boolean @default(false)
+  createdAt DateTime @default(now())
+  UpdatedAt DateTime @updatedAt
 
 
 }
@@ -26,6 +30,7 @@ model User {
 model Profile {
   id          Int      @id @default(autoincrement())
   fullName    String
+  rank        Int
   pictureUrl  String
   biography   String
   userId      Int      @unique
