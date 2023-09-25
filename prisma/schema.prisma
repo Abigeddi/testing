@@ -26,6 +26,17 @@ model User {
 
 
 }
+model Channel {
+  id          Int      @id @default(autoincrement())
+  name String @unique
+  password String
+  owner_role Role @default(ADMIN)
+  type Mode @default(PUBLIC)
+  topic String
+  owner   User   @relation(fields: [owner_id], references: [id])
+  owner_id Int
+
+}
 
 model Profile {
   id          Int      @id @default(autoincrement())
@@ -37,24 +48,7 @@ model Profile {
   user User @relation(fields: [userId],references:[id])
 }
 
-model Channel {
-  id          Int      @id @default(autoincrement())
-  name String @unique
-  password String
-  owner_role Role @default(ADMIN)
-  type Mode @default(PUBLIC)
-  owner_id Int
-  topic String
-  user   User   @relation(fields: [owner_id], references: [id])
-  channel_members Channel_member[]
 
-}
-model Channel_member{
-    id          Int      @id @default(autoincrement())
-  channel     Channel  @relation(fields: [channelId], references: [id])
-  channelId   Int @unique 
-  userId      Int @unique
-}
 
 
 enum Role {
