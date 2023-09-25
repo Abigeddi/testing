@@ -23,6 +23,10 @@ model User {
   isonline Boolean @default(false)
   createdAt DateTime @default(now())
   UpdatedAt DateTime @updatedAt
+  freinds Freinds[]
+  gamesAsPlayer1 Game?   @relation("Player1Games")
+  gamesAsPlayer2 Game?   @relation("Player2Games")
+  channelMembers ChannelMember[]
 
 
 }
@@ -35,7 +39,20 @@ model Channel {
   topic String
   owner   User   @relation(fields: [owner_id], references: [id])
   owner_id Int
+  channel_memebers ChannelMember[]
 
+}
+model ChannelMember {
+  id          Int      @id @default(autoincrement())
+  // Define a many-to-one relationship with the user who is a member of the channel
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
+
+  // Define a many-to-one relationship with the channel that the user is a member of
+  channel     Channel  @relation(fields: [channelId], references: [id])
+  channelId   Int
+
+  // Add any other fields related to the channel membership as needed
 }
 
 model Profile {
@@ -44,12 +61,28 @@ model Profile {
   rank        Int
   pictureUrl  String
   biography   String
-  userId      Int      @unique
   user User @relation(fields: [userId],references:[id])
+  userId      Int      @unique
 }
 
+model Freinds {
+  id       Int    @id @default(autoincrement())
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int @unique
 
+}
 
+model Game {
+  id            Int       @id @default(autoincrement())
+  player1Id     Int @unique
+  player2Id     Int @unique
+  score         String
+  status        String
+  player1       User      @relation("Player1Games", fields: [player1Id], references: [id])
+  player2       User      @relation("Player2Games", fields: [player2Id], references: [id])
+
+  createdAt     DateTime  @default(now())
+}
 
 enum Role {
   USER
